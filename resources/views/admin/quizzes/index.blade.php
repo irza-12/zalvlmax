@@ -1,101 +1,152 @@
-@extends('layouts.admin')
-
-@section('title', 'Kelola Kuis')
-@section('page-title', 'Kelola Kuis')
-
-@section('content')
-    <div class="mb-3">
-        <a href="{{ route('admin.quizzes.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-2"></i>Tambah Kuis Baru
-        </a>
-    </div>
-
-    <div class="card">
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Judul</th>
-                            <th>Durasi</th>
-                            <th>Jadwal</th>
-                            <th>Status</th>
-                            <th>Soal</th>
-                            <th>Peserta</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse($quizzes as $index => $quiz)
-                            <tr>
-                                <td>{{ $quizzes->firstItem() + $index }}</td>
-                                <td>
-                                    <strong>{{ $quiz->title }}</strong>
-                                    <br>
-                                    <small class="text-muted">{{ Str::limit($quiz->description, 50) }}</small>
-                                </td>
-                                <td>{{ $quiz->duration }} menit</td>
-                                <td>
-                                    <small>
-                                        {{ $quiz->start_time->format('d/m/Y H:i') }}
-                                        <br>
-                                        s/d {{ $quiz->end_time->format('d/m/Y H:i') }}
-                                    </small>
-                                </td>
-                                <td>
-                                    <form action="{{ route('admin.quizzes.toggle-status', $quiz) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        <button type="submit"
-                                            class="badge bg-{{ $quiz->status === 'active' ? 'success' : 'secondary' }} border-0">
-                                            {{ ucfirst($quiz->status) }}
-                                        </button>
-                                    </form>
-                                </td>
-                                <td>{{ $quiz->questions_count }}</td>
-                                <td>{{ $quiz->results_count }}</td>
-                                <td>
-                                    <div class="btn-group" role="group">
-                                        <a href="{{ route('admin.quizzes.show', $quiz) }}" class="btn btn-sm btn-info"
-                                            title="Detail">
-                                            <i class="bi bi-eye"></i>
-                                        </a>
-                                        <a href="{{ route('admin.questions.index', $quiz) }}" class="btn btn-sm btn-primary"
-                                            title="Kelola Soal">
-                                            <i class="bi bi-list-check"></i>
-                                        </a>
-                                        <a href="{{ route('admin.quizzes.edit', $quiz) }}" class="btn btn-sm btn-warning"
-                                            title="Edit">
-                                            <i class="bi bi-pencil"></i>
-                                        </a>
-                                        <form action="{{ route('admin.quizzes.destroy', $quiz) }}" method="POST"
-                                            class="d-inline" onsubmit="return confirm('Yakin ingin menghapus kuis ini?')">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="submit" class="btn btn-sm btn-danger" title="Hapus">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="8" class="text-center text-muted py-4">
-                                    Belum ada kuis. <a href="{{ route('admin.quizzes.create') }}">Tambah kuis baru</a>
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex items-center justify-between">
+            <div>
+                <h2 class="font-semibold text-xl text-secondary-900 leading-tight">
+                    Kelola Kuis
+                </h2>
+                <p class="mt-2 text-sm text-secondary-500">Buat dan kelola kuis untuk pengguna</p>
             </div>
-
-            @if($quizzes->hasPages())
-                <div class="mt-3">
-                    {{ $quizzes->links() }}
-                </div>
-            @endif
+            <a href="{{ route('admin.quizzes.create') }}" class="inline-flex items-center gap-x-2 rounded-md bg-brand-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-600 transition-colors">
+                <svg class="-ml-0.5 h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.75-11.25a.75.75 0 00-1.5 0v2.5h-2.5a.75.75 0 000 1.5h2.5v2.5a.75.75 0 001.5 0v-2.5h2.5a.75.75 0 000-1.5h-2.5v-2.5z" clip-rule="evenodd" />
+                </svg>
+                Buat Kuis Baru
+            </a>
         </div>
+    </x-slot>
+
+    <!-- Filters -->
+    <div class="mb-6 rounded-lg bg-white p-4 shadow-card border border-secondary-100">
+        <form action="" method="GET" class="flex flex-col sm:flex-row gap-4">
+            <div class="relative flex-grow sm:max-w-xs">
+                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <svg class="h-5 w-5 text-secondary-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+                <input type="text" name="search" value="{{ request('search') }}" class="block w-full rounded-md border-0 py-2 pl-10 text-secondary-900 ring-1 ring-inset ring-secondary-300 placeholder:text-secondary-400 focus:ring-2 focus:ring-inset focus:ring-brand-600 sm:text-sm sm:leading-6" placeholder="Cari kuis...">
+            </div>
+            
+            <div class="sm:w-40">
+                <select name="status" class="block w-full rounded-md border-0 py-2 pl-3 pr-10 text-secondary-900 ring-1 ring-inset ring-secondary-300 focus:ring-2 focus:ring-inset focus:ring-brand-600 sm:text-sm sm:leading-6">
+                    <option value="">Semua Status</option>
+                    <option value="draft" {{ request('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                    <option value="active" {{ request('status') == 'active' ? 'selected' : '' }}>Aktif</option>
+                    <option value="inactive" {{ request('status') == 'inactive' ? 'selected' : '' }}>Nonaktif</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="inline-flex items-center justify-center rounded-md bg-secondary-900 px-3.5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-secondary-800 transition-colors">
+                <span class="lg:hidden">Cari</span>
+                <span class="hidden lg:inline">Filter</span>
+            </button>
+        </form>
     </div>
-@endsection
+
+    <!-- Table -->
+    <div class="rounded-lg bg-white shadow-card border border-secondary-100 overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="min-w-full divide-y divide-secondary-200">
+                <thead class="bg-secondary-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Kuis</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Soal & Peserta</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Durasi</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Status</th>
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">Dibuat</th>
+                        <th scope="col" class="relative px-6 py-3">
+                            <span class="sr-only">Aksi</span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-secondary-100">
+                    @forelse($quizzes as $quiz)
+                    <tr class="hover:bg-secondary-50/50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex flex-col">
+                                <span class="text-sm font-semibold text-secondary-900">{{ $quiz->title }}</span>
+                                <span class="text-xs text-secondary-500 truncate max-w-xs">{{ Str::limit($quiz->description, 50) }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <div class="flex flex-col gap-1">
+                                <span class="text-xs text-secondary-600">{{ $quiz->questions_count }} soal</span>
+                                <span class="text-xs text-secondary-400">{{ $quiz->results_count }} peserta</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary-600">
+                            {{ $quiz->duration }} menit
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                             <form action="{{ route('admin.quizzes.toggle-status', $quiz) }}" method="POST">
+                                @csrf
+                                <button type="submit" class="hover:opacity-80 transition-opacity" title="Klik untuk ubah status">
+                                    @switch($quiz->status)
+                                        @case('draft')
+                                            <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">Draft</span>
+                                            @break
+                                        @case('active')
+                                            <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Aktif</span>
+                                            @break
+                                        @case('inactive')
+                                            <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 ring-1 ring-inset ring-yellow-600/20">Nonaktif</span>
+                                            @break
+                                        @default
+                                            <span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10">{{ ucfirst($quiz->status) }}</span>
+                                    @endswitch
+                                </button>
+                            </form>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-secondary-500">
+                            {{ $quiz->created_at->format('d M Y') }}
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                            <div class="flex items-center justify-end gap-x-3">
+                                <a href="{{ route('admin.questions.index', $quiz) }}" class="text-secondary-400 hover:text-brand-600 transition-colors" title="Kelola Soal">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9 5.25h.008v.008H12v-.008z" />
+                                    </svg>
+                                </a>
+                                <a href="{{ route('admin.quizzes.edit', $quiz) }}" class="text-brand-600 hover:text-brand-800 transition-colors" title="Edit">
+                                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                                    </svg>
+                                </a>
+                                <form action="{{ route('admin.quizzes.destroy', $quiz) }}" method="POST" class="inline" onsubmit="return confirm('Hapus kuis ini?')">
+                                    @csrf @method('DELETE')
+                                    <button type="submit" class="text-secondary-400 hover:text-red-600 transition-colors" title="Hapus">
+                                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    @empty
+                    <tr>
+                        <td colspan="6" class="px-6 py-10 text-center text-secondary-500">
+                             <div class="flex flex-col items-center justify-center">
+                                <span class="rounded-full bg-secondary-100 p-3 mb-2">
+                                     <svg class="h-8 w-8 text-secondary-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                    </svg>
+                                </span>
+                                <p class="text-base font-semibold">Belum ada kuis</p>
+                                <p class="mb-4 text-sm max-w-sm">Mulai dengan membuat kuis baru untuk pengguna Anda.</p>
+                                <a href="{{ route('admin.quizzes.create') }}" class="text-sm font-semibold text-brand-600 hover:text-brand-500">Buat Kuis Pertama &rarr;</a>
+                            </div>
+                        </td>
+                    </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        @if($quizzes->hasPages())
+        <div class="border-t border-secondary-100 bg-white px-6 py-4 rounded-b-3xl">
+            {{ $quizzes->appends(request()->query())->links() }}
+        </div>
+        @endif
+    </div>
+</x-app-layout>

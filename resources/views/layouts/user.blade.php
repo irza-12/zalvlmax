@@ -169,7 +169,7 @@
 
     <footer>
         <div class="container text-center">
-            <p class="text-muted mb-0 small">&copy; {{ date('Y') }} PT Wirakarya Sakti. All rights reserved.</p>
+            <p class="text-muted mb-0 small">&copy; {{ date('Y') }} Tim Tata Usaha Kayu. All rights reserved.</p>
         </div>
     </footer>
 

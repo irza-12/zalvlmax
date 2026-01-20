@@ -61,6 +61,16 @@
                                         {{ $entry->user->name }}
                                         @if(Auth::id() == $entry->user_id)
                                             <span class="badge bg-primary ms-2">Anda</span>
+                                            @php
+                                                $myResult = \App\Models\Result::where('user_id', Auth::id())
+                                                    ->where('quiz_id', $quiz->id)
+                                                    ->first();
+                                            @endphp
+                                            @if($myResult)
+                                                <a href="{{ route('user.results.export-pdf', $myResult) }}" class="ms-2 text-danger text-decoration-none small">
+                                                    <i class="bi bi-printer"></i> Cetak
+                                                </a>
+                                            @endif
                                         @endif
                                     </div>
                                 </td>

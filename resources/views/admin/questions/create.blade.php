@@ -1,193 +1,228 @@
-@extends('layouts.admin')
+<x-app-layout title="Tambah Soal Baru">
+    <x-slot name="header">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <nav class="flex mb-2" aria-label="Breadcrumb">
+                    <ol class="inline-flex items-center space-x-1 md:space-x-2">
+                        <li class="inline-flex items-center">
+                            <a href="{{ route('admin.quizzes.index') }}"
+                                class="text-sm font-medium text-secondary-500 hover:text-brand-600 transition-colors">Kuis</a>
+                        </li>
+                        <li>
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 text-secondary-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <a href="{{ route('admin.questions.index', $quiz) }}"
+                                    class="text-sm font-medium text-secondary-500 hover:text-brand-600 transition-colors">Kelola
+                                    Soal</a>
+                            </div>
+                        </li>
+                        <li aria-current="page">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 text-secondary-400 mx-1" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd"
+                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                                <span class="text-sm font-medium text-secondary-900">Tambah</span>
+                            </div>
+                        </li>
+                    </ol>
+                </nav>
+                <h2 class="text-2xl font-display font-bold text-secondary-900 leading-tight">
+                    Tambah Soal Baru
+                </h2>
+                <p class="text-sm text-secondary-500 mt-2">
+                    {{ $quiz->title }}
+                </p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('admin.questions.index', $quiz) }}"
+                    class="inline-flex items-center px-4 py-2 bg-white border border-secondary-200 rounded-xl text-sm font-medium text-secondary-600 hover:bg-secondary-50 transition-all shadow-soft group">
+                    <svg class="w-4 h-4 mr-2 text-secondary-400 group-hover:text-secondary-600 transition-colors"
+                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Batal
+                </a>
+            </div>
+        </div>
+    </x-slot>
 
-@section('title', 'Tambah Soal')
-@section('page-title', 'Tambah Soal - ' . $quiz->title)
+    <div class="max-w-4xl mx-auto" x-data="{ 
+        type: '{{ old('type', 'multiple_choice') }}',
+        options: @js(old('options', ['', '', '', ''])),
+        corrects: @js(old('correct_options', ['0'])),
+        addOption() {
+            this.options.push('');
+        },
+        removeOption(index) {
+            if (this.options.length > 2) {
+                this.options.splice(index, 1);
+                // Adjust correctness array
+                this.corrects = this.corrects.filter(i => i != index).map(i => i > index ? i - 1 : i);
+            }
+        },
+        toggleCorrect(index) {
+            const idx = this.corrects.indexOf(index.toString());
+            if (this.type === 'multiple_choice' || this.type === 'true_false') {
+                this.corrects = [index.toString()];
+            } else {
+                if (idx > -1) {
+                    if (this.corrects.length > 1) this.corrects.splice(idx, 1);
+                } else {
+                    this.corrects.push(index.toString());
+                }
+            }
+        },
+        isCorrect(index) {
+            return this.corrects.includes(index.toString());
+        },
+        checkType() {
+            if (this.type === 'true_false') {
+                this.options = ['Benar', 'Salah'];
+                this.corrects = ['0'];
+            }
+        }
+    }" x-init="checkType()">
+        <form action="{{ route('admin.questions.store', $quiz) }}" method="POST" class="space-y-6">
+            @csrf
 
-@section('content')
-<div class="row">
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-body">
-                <form action="{{ route('admin.questions.store', $quiz) }}" method="POST" id="questionForm">
-                    @csrf
-
-                    <div class="mb-3">
-                        <label for="question_text" class="form-label">Pertanyaan <span class="text-danger">*</span></label>
-                        <textarea class="form-control @error('question_text') is-invalid @enderror" 
-                                  id="question_text" name="question_text" rows="3" required>{{ old('question_text') }}</textarea>
-                        @error('question_text')
-                            <div class="invalid-feedback">{{ $message }}</div>
-                        @enderror
+            <!-- Question Card -->
+            <div class="bg-white rounded-2xl shadow-card border border-secondary-100/50 overflow-hidden">
+                <div class="p-6 border-b border-secondary-100/50 bg-secondary-50/50">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary-900 flex items-center gap-2">
+                        <div class="p-1.5 bg-brand-600 rounded-lg text-white">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        Konten Pertanyaan
+                    </h3>
+                </div>
+                <div class="p-8 space-y-6">
+                    <div>
+                        <x-input-label for="question_text" value="Pertanyaan" class="mb-2" />
+                        <textarea id="question_text" name="question_text" rows="4"
+                            class="block w-full rounded-xl border-secondary-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 transition-all px-4 py-3"
+                            placeholder="Tuliskan teks pertanyaan di sini..."
+                            required>{{ old('question_text') }}</textarea>
+                        <x-input-error :messages="$errors->get('question_text')" class="mt-2" />
                     </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="type" class="form-label">Tipe Soal <span class="text-danger">*</span></label>
-                            <select class="form-select @error('type') is-invalid @enderror" id="type" name="type" required>
-                                <option value="multiple_choice" {{ old('type') == 'multiple_choice' ? 'selected' : '' }}>Pilihan Ganda</option>
-                                <option value="true_false" {{ old('type') == 'true_false' ? 'selected' : '' }}>Benar/Salah</option>
-                                <option value="multiple_correct" {{ old('type') == 'multiple_correct' ? 'selected' : '' }}>Multiple Correct</option>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <x-input-label for="type" value="Tipe Soal" class="mb-2" />
+                            <select id="type" name="type" x-model="type" @change="checkType()"
+                                class="block w-full rounded-xl border-secondary-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 transition-all px-4 py-3 h-[50px] appearance-none"
+                                style="background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22currentColor%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpolyline%20points%3D%226%209%2012%2015%2018%209%22%3E%3C/polyline%3E%3C/svg%3E'); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1em;">
+                                <option value="multiple_choice">Pilihan Ganda (Single Answer)</option>
+                                <option value="true_false">Benar / Salah</option>
+                                <option value="multiple_correct">Pilihan Ganda (Multiple Answers)</option>
                             </select>
-                            @error('type')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                            <x-input-error :messages="$errors->get('type')" class="mt-2" />
                         </div>
 
-                        <div class="col-md-6 mb-3">
-                            <label for="score" class="form-label">Bobot Nilai <span class="text-danger">*</span></label>
-                            <input type="number" class="form-control @error('score') is-invalid @enderror" 
-                                   id="score" name="score" value="{{ old('score', 10) }}" min="1" required>
-                            @error('score')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
+                        <div>
+                            <x-input-label for="score" value="Bobot Nilai (Poin)" class="mb-2" />
+                            <x-text-input id="score" type="number" name="score" value="{{ old('score', 10) }}" min="1"
+                                required class="w-full" />
+                            <x-input-error :messages="$errors->get('score')" class="mt-2" />
                         </div>
                     </div>
+                </div>
+            </div>
 
-                    <div class="mb-3">
-                        <label class="form-label">Opsi Jawaban <span class="text-danger">*</span></label>
-                        <div id="optionsContainer">
-                            @for($i = 0; $i < 4; $i++)
-                                <div class="option-row mb-2">
-                                    <div class="input-group">
-                                        <div class="input-group-text">
-                                            <input type="checkbox" name="correct_options[]" value="{{ $i }}" 
-                                                   {{ is_array(old('correct_options')) && in_array($i, old('correct_options')) ? 'checked' : '' }}>
-                                        </div>
-                                        <input type="text" class="form-control" name="options[]" 
-                                               placeholder="Opsi {{ chr(65 + $i) }}" 
-                                               value="{{ old('options.' . $i) }}" required>
-                                        @if($i >= 2)
-                                            <button type="button" class="btn btn-danger" onclick="removeOption(this)">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        @endif
-                                    </div>
+            <!-- Options Card -->
+            <div class="bg-white rounded-2xl shadow-card border border-secondary-100/50 overflow-hidden">
+                <div class="p-6 border-b border-secondary-100/50 bg-secondary-50/50 flex items-center justify-between">
+                    <h3 class="text-sm font-bold uppercase tracking-wider text-secondary-900 flex items-center gap-2">
+                        <div class="p-1.5 bg-emerald-600 rounded-lg text-white">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>
+                        </div>
+                        Opsi Jawaban
+                    </h3>
+                    <template x-if="type !== 'true_false'">
+                        <button type="button" @click="addOption()"
+                            class="inline-flex items-center text-xs font-bold text-brand-600 hover:text-brand-700 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-lg transition-all uppercase tracking-wider">
+                            <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 4v16m8-8H4" />
+                            </svg>
+                            Tambah Opsi
+                        </button>
+                    </template>
+                </div>
+                <div class="p-8 space-y-4">
+                    <p class="text-xs text-secondary-500 mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-brand-500" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        Klik pada simbol centang di sebelah kiri untuk menandai jawaban yang benar.
+                    </p>
+
+                    <div class="space-y-3">
+                        <template x-for="(option, index) in options" :key="index">
+                            <div class="group flex items-center gap-3">
+                                <!-- Correct Toggle -->
+                                <button type="button" @click="toggleCorrect(index)"
+                                    :class="isCorrect(index) ? 'bg-emerald-500 text-white border-emerald-500 shadow-emerald-200' : 'bg-white text-secondary-300 border-secondary-200 hover:border-brand-400 group-hover:bg-secondary-50 shadow-soft'"
+                                    class="flex-shrink-0 w-11 h-11 rounded-xl border-2 flex items-center justify-center transition-all shadow-md">
+                                    <svg class="w-6 h-6" :class="isCorrect(index) ? 'scale-110' : 'scale-90'"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <input type="checkbox" name="correct_options[]" :value="index" class="hidden"
+                                        :checked="isCorrect(index)">
+                                </button>
+
+                                <!-- Input Field -->
+                                <div class="relative flex-grow">
+                                    <input type="text" name="options[]" x-model="options[index]"
+                                        class="block w-full rounded-xl border-secondary-200 shadow-sm focus:border-brand-500 focus:ring-brand-500 transition-all px-4 py-3"
+                                        :placeholder="'Opsi Jawaban ' + (index + 1) + '...'"
+                                        :readonly="type === 'true_false'" required>
                                 </div>
-                            @endfor
-                        </div>
-                        <button type="button" class="btn btn-sm btn-outline-primary mt-2" onclick="addOption()">
-                            <i class="bi bi-plus-circle me-1"></i>Tambah Opsi
-                        </button>
-                        @error('options')
-                            <div class="text-danger small mt-1">{{ $message }}</div>
-                        @enderror
-                        @error('correct_options')
-                            <div class="text-danger small mt-1">{{ $message }}</div>
-                        @enderror
-                        <small class="text-muted d-block mt-2">
-                            <i class="bi bi-info-circle me-1"></i>Centang checkbox untuk menandai jawaban yang benar
-                        </small>
+
+                                <!-- Remove Action -->
+                                <template x-if="type !== 'true_false' && options.length > 2">
+                                    <button type="button" @click="removeOption(index)"
+                                        class="flex-shrink-0 p-2.5 text-secondary-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                        </svg>
+                                    </button>
+                                </template>
+                            </div>
+                        </template>
                     </div>
 
-                    <div class="d-flex justify-content-between">
-                        <a href="{{ route('admin.questions.index', $quiz) }}" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left me-2"></i>Kembali
-                        </a>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-save me-2"></i>Simpan Soal
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header bg-white">
-                <h6 class="mb-0"><i class="bi bi-journal-text me-2"></i>Info Kuis</h6>
-            </div>
-            <div class="card-body">
-                <p class="mb-1"><strong>{{ $quiz->title }}</strong></p>
-                <p class="small text-muted mb-2">{{ $quiz->description }}</p>
-                <hr>
-                <p class="small mb-1">Durasi: <strong>{{ $quiz->duration }} menit</strong></p>
-                <p class="small mb-1">Status: <span class="badge bg-{{ $quiz->status === 'active' ? 'success' : 'secondary' }}">{{ ucfirst($quiz->status) }}</span></p>
-            </div>
-        </div>
-
-        <div class="card mt-3">
-            <div class="card-header bg-white">
-                <h6 class="mb-0"><i class="bi bi-info-circle me-2"></i>Panduan</h6>
-            </div>
-            <div class="card-body">
-                <p class="small text-muted mb-2"><strong>Tipe Soal:</strong></p>
-                <ul class="small text-muted">
-                    <li><strong>Pilihan Ganda:</strong> Hanya 1 jawaban benar</li>
-                    <li><strong>Benar/Salah:</strong> 2 opsi (Benar/Salah)</li>
-                    <li><strong>Multiple Correct:</strong> Bisa lebih dari 1 jawaban benar</li>
-                </ul>
-            </div>
-        </div>
-    </div>
-</div>
-
-@push('scripts')
-<script>
-let optionIndex = 4;
-
-function addOption() {
-    const container = document.getElementById('optionsContainer');
-    const optionRow = document.createElement('div');
-    optionRow.className = 'option-row mb-2';
-    optionRow.innerHTML = `
-        <div class="input-group">
-            <div class="input-group-text">
-                <input type="checkbox" name="correct_options[]" value="${optionIndex}">
-            </div>
-            <input type="text" class="form-control" name="options[]" 
-                   placeholder="Opsi ${String.fromCharCode(65 + optionIndex)}" required>
-            <button type="button" class="btn btn-danger" onclick="removeOption(this)">
-                <i class="bi bi-trash"></i>
-            </button>
-        </div>
-    `;
-    container.appendChild(optionRow);
-    optionIndex++;
-}
-
-function removeOption(button) {
-    const optionRow = button.closest('.option-row');
-    optionRow.remove();
-    updateOptionIndexes();
-}
-
-function updateOptionIndexes() {
-    const options = document.querySelectorAll('.option-row');
-    options.forEach((option, index) => {
-        const checkbox = option.querySelector('input[type="checkbox"]');
-        const input = option.querySelector('input[type="text"]');
-        checkbox.value = index;
-        input.placeholder = `Opsi ${String.fromCharCode(65 + index)}`;
-    });
-    optionIndex = options.length;
-}
-
-// Handle type change for True/False
-document.getElementById('type').addEventListener('change', function() {
-    if (this.value === 'true_false') {
-        const container = document.getElementById('optionsContainer');
-        container.innerHTML = `
-            <div class="option-row mb-2">
-                <div class="input-group">
-                    <div class="input-group-text">
-                        <input type="checkbox" name="correct_options[]" value="0">
-                    </div>
-                    <input type="text" class="form-control" name="options[]" value="Benar" readonly>
+                    <x-input-error :messages="$errors->get('options')" class="mt-2" />
+                    <x-input-error :messages="$errors->get('correct_options')" class="mt-2" />
                 </div>
             </div>
-            <div class="option-row mb-2">
-                <div class="input-group">
-                    <div class="input-group-text">
-                        <input type="checkbox" name="correct_options[]" value="1">
-                    </div>
-                    <input type="text" class="form-control" name="options[]" value="Salah" readonly>
-                </div>
+
+            <div class="flex items-center justify-end gap-4 pt-4">
+                <a href="{{ route('admin.questions.index', $quiz) }}"
+                    class="text-sm font-semibold text-secondary-600 hover:text-secondary-900 transition-colors">
+                    Kembali tanpa menyimpan
+                </a>
+                <x-primary-button class="py-3 px-8 text-base">
+                    Simpan Soal
+                </x-primary-button>
             </div>
-        `;
-        optionIndex = 2;
-    }
-});
-</script>
-@endpush
-@endsection
+        </form>
+    </div>
+</x-app-layout>

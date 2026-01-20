@@ -10,17 +10,46 @@ class Result extends Model
     use HasFactory;
 
     protected $fillable = [
+        'session_id',
         'user_id',
         'quiz_id',
         'total_score',
+        'max_score',
+        'percentage',
         'correct_answers',
         'wrong_answers',
+        'unanswered',
+        'total_questions',
         'completion_time',
+        'started_at',
+        'completed_at',
+        'is_passed',
+        'rank',
+        'percentile',
+        'certificate_id',
+        'reviewed_by',
+        'reviewed_at',
+        'notes',
     ];
 
     protected $casts = [
         'total_score' => 'decimal:2',
+        'max_score' => 'decimal:2',
+        'percentage' => 'decimal:2',
+        'percentile' => 'decimal:2',
+        'is_passed' => 'boolean',
+        'started_at' => 'datetime',
+        'completed_at' => 'datetime',
+        'reviewed_at' => 'datetime',
     ];
+
+    /**
+     * Get the session that this result belongs to
+     */
+    public function session()
+    {
+        return $this->belongsTo(QuizSession::class, 'session_id');
+    }
 
     /**
      * Get the user that owns this result
@@ -39,6 +68,14 @@ class Result extends Model
     }
 
     /**
+     * Get the reviewer
+     */
+    public function reviewer()
+    {
+        return $this->belongsTo(User::class, 'reviewed_by');
+    }
+
+    /**
      * Get formatted completion time
      */
     public function getFormattedCompletionTimeAttribute(): string
@@ -47,8 +84,9 @@ class Result extends Model
             return '-';
         }
 
-        $minutes = floor($this->completion_time / 60);
-        $seconds = $this->completion_time % 60;
+        $totalSeconds = abs($this->completion_time);
+        $minutes = floor($totalSeconds / 60);
+        $seconds = $totalSeconds % 60;
 
         if ($minutes > 0) {
             return sprintf('%d Menit %d Detik', $minutes, $seconds);
@@ -62,7 +100,7 @@ class Result extends Model
      */
     public function getStatusLabelAttribute(): string
     {
-        return $this->completion_time ? 'Selesai' : 'Sedang Mengerjakan';
+        return $this->completed_at ? 'Selesai' : 'Sedang Mengerjakan';
     }
 
     /**
@@ -70,19 +108,30 @@ class Result extends Model
      */
     public function getStatusColorAttribute(): string
     {
-        return $this->completion_time ? 'success' : 'warning';
+        return $this->completed_at ? 'emerald' : 'amber';
     }
 
     /**
-     * Get percentage score
+     * Get pass status label
      */
-    public function getPercentageAttribute(): float
+    public function getPassStatusLabelAttribute(): string
     {
-        $totalQuestions = $this->correct_answers + $this->wrong_answers;
-        if ($totalQuestions === 0) {
-            return 0;
-        }
+        return $this->is_passed ? 'LULUS' : 'TIDAK LULUS';
+    }
 
-        return round(($this->correct_answers / $totalQuestions) * 100, 2);
+    /**
+     * Get pass status color
+     */
+    public function getPassStatusColorAttribute(): string
+    {
+        return $this->is_passed ? 'success' : 'danger';
+    }
+
+    /**
+     * Check if result is passed (use database value for consistency)
+     */
+    public function isPassed(): bool
+    {
+        return (bool) $this->is_passed;
     }
 }

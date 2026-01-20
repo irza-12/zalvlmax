@@ -13,43 +13,65 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Create Super Admin User
+        User::updateOrCreate(
+            ['email' => 'superadmin@zalvlmax.com'],
+            [
+                'name' => 'Super Admin',
+                'password' => Hash::make('superadmin123'),
+                'role' => 'super_admin',
+                'is_active' => true,
+            ]
+        );
+
         // Create Admin User
-        User::create([
-            'name' => 'Administrator',
-            'email' => 'ifhahlefi@gmail.com',
-            'password' => Hash::make('admin123'),
-            'role' => 'admin',
-            'is_active' => true,
-        ]);
+        User::updateOrCreate(
+            ['email' => 'admin@zalvlmax.com'],
+            [
+                'name' => 'Administrator',
+                'password' => Hash::make('admin123'),
+                'role' => 'admin',
+                'is_active' => true,
+            ]
+        );
 
         // Create Sample Users
-        User::create([
-            'name' => 'John Doe',
-            'email' => 'john@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'user',
-            'is_active' => true,
-        ]);
+        User::updateOrCreate(
+            ['email' => 'john@example.com'],
+            [
+                'name' => 'John Doe',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+                'is_active' => true,
+            ]
+        );
 
-        User::create([
-            'name' => 'Jane Smith',
-            'email' => 'jane@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'user',
-            'is_active' => true,
-        ]);
+        User::updateOrCreate(
+            ['email' => 'jane@example.com'],
+            [
+                'name' => 'Jane Smith',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+                'is_active' => true,
+            ]
+        );
 
-        User::create([
-            'name' => 'Bob Wilson',
-            'email' => 'bob@example.com',
-            'password' => Hash::make('password'),
-            'role' => 'user',
-            'is_active' => true,
-        ]);
+        User::updateOrCreate(
+            ['email' => 'bob@example.com'],
+            [
+                'name' => 'Bob Wilson',
+                'password' => Hash::make('password'),
+                'role' => 'user',
+                'is_active' => true,
+            ]
+        );
 
         // Call other seeders
         $this->call([
+            CategorySeeder::class,
+            SettingSeeder::class,
             QuizSeeder::class,
         ]);
     }
 }
+

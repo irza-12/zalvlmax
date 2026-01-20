@@ -1,274 +1,246 @@
-# CoC Quiz Application - Aplikasi Evaluasi dan Kuis Chain of Custody
+# ZalvlmaX - Online Quiz Management System
 
-Aplikasi web berbasis Laravel untuk evaluasi dan kuis pembelajaran SOP Chain of Custody (CoC) dengan konsep mirip Quizizz.
+[![Laravel](https://img.shields.io/badge/Laravel-12.x-red.svg)](https://laravel.com)
+[![Railway](https://img.shields.io/badge/Railway-Deploy-blue.svg)](https://railway.app)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE.md)
+
+ZalvlmaX adalah platform kuis online profesional dengan fitur lengkap untuk evaluasi, pembelajaran, dan monitoring realtime. Dengan antarmuka modern dan fitur enterprise-grade, aplikasi ini cocok untuk institusi pendidikan, perusahaan, dan organisasi.
+
+---
 
 ## 📋 Fitur Utama
 
-### Role Admin
-- ✅ Dashboard dengan statistik lengkap (total kuis, peserta, rata-rata nilai, grafik)
-- ✅ CRUD Kuis (judul, deskripsi, durasi, jadwal, status)
-- ✅ CRUD Soal (pilihan ganda, benar/salah, multiple correct)
-- ✅ CRUD Opsi Jawaban dengan penentuan jawaban benar
-- ✅ Melihat hasil evaluasi seluruh peserta
-- ✅ Leaderboard/ranking peserta per kuis
-- ✅ Export hasil evaluasi ke Excel dan PDF
-- ✅ Manajemen user (aktif/nonaktif, reset password)
+### 🔐 Role-Based Access Control
+| Role | Akses |
+|------|-------|
+| **Super Admin** | Akses penuh ke seluruh sistem, kelola admin & user, pengaturan sistem |
+| **Admin** | Kelola kuis, soal, kategori, lihat laporan |
+| **User** | Mengerjakan kuis, lihat hasil, lihat leaderboard |
 
-### Role User (Peserta)
-- ✅ Melihat daftar kuis aktif
-- ✅ Mengerjakan kuis sesuai durasi
-- ✅ Menjawab soal satu per satu secara interaktif
-- ✅ Melihat nilai setelah selesai
-- ✅ Melihat riwayat kuis
-- ✅ Melihat leaderboard
+### 🛡️ Dashboard Super Admin
+- **Statistik Real-time**: Pantau total kuis, peserta, dan rata-rata nilai secara instan
+- **Manajemen User**: CRUD user dengan role assignment (Super Admin, Admin, User)
+- **Pengaturan Sistem**: Konfigurasi aplikasi, email, dan keamanan
+- **Activity Log**: Pantau semua aktivitas dalam sistem
+- **Backup & Restore**: Kelola backup database
 
-## 🛠️ Teknologi
+### 👨‍💼 Dashboard Admin
+- **Manajemen Kuis**: CRUD kuis dengan pengaturan jadwal, durasi, passing score, max attempts
+- **Bank Soal**: Dukungan berbagai tipe soal:
+  - Pilihan Ganda (Multiple Choice)
+  - Benar/Salah (True/False)
+  - Jawaban Jamak (Multiple Correct)
+  - Essay
+  - Isian Singkat (Fill Blank)
+- **Kategori Kuis**: Organisasi kuis berdasarkan kategori
+- **Monitoring Realtime**: Pantau progress user seperti Quizizz
+- **Leaderboard**: Peringkat otomatis berdasarkan nilai tertinggi dan waktu tercepat
+- **Export Data**: Unduh laporan dalam format **Excel** dan **PDF**
 
-- **Framework**: Laravel 11.x
-- **PHP**: 8.1+
-- **Database**: MySQL/MariaDB
-- **Authentication**: Laravel Breeze
-- **Template Engine**: Blade
-- **CSS Framework**: Bootstrap 5
-- **Export**: Laravel Excel & DomPDF
+### 📊 Monitoring Realtime (seperti Quizizz)
+- **Live Dashboard**: Pantau user yang sedang mengerjakan kuis
+- **Status Soal**: Belum dijawab, dijawab, ditandai untuk review, dilewati
+- **Progress Bar**: Visualisasi progress per user
+- **Timer**: Countdown waktu per user
+- **Notifikasi**: Alert saat user mulai/selesai kuis
 
-## 📦 Instalasi
+### 📈 Analitik & Laporan
+- **Rekap per Kuis**: Statistik lengkap setiap kuis
+- **Rekap per User**: Performa individu user
+- **Rekap per Periode**: Trend harian, mingguan, bulanan
+- **Statistik Soal**: Tingkat kesulitan per soal
+- **Distribusi Nilai**: Grafik distribusi skor
+
+### 📄 Export & Laporan
+- **Excel Export**: Tabel rapi dengan formatting profesional
+- **PDF Export**: Layout dokumen profesional dengan header/footer
+- **Filter Laporan**: Tanggal, kuis, user, kategori
+- **Ringkasan Statistik**: Rata-rata, tertinggi, terendah
+
+### 🎓 Portal Peserta
+- **Kuis Aktif**: Daftar kuis yang tersedia
+- **Interface Interaktif**: Timer otomatis, navigasi soal
+- **Hasil Instan**: Skor dan pembahasan setelah selesai
+- **Riwayat Kuis**: Pantau perkembangan belajar
+- **Leaderboard**: Bersaing dengan peserta lain
+
+---
+
+## 🛠️ Stack Teknologi
+
+| Komponen | Teknologi |
+|----------|-----------|
+| Backend | Laravel 12.x (PHP 8.2+) |
+| Frontend | Bootstrap 5 & Vanilla JS |
+| Database | MySQL / MariaDB |
+| Auth | Laravel Breeze (Session-based) |
+| Asset Bundler | Vite 6+ |
+| Realtime | Laravel Reverb / Pusher |
+| Excel | Laravel Excel (maatwebsite/excel) |
+| PDF | DomPDF (barryvdh/laravel-dompdf) |
+
+---
+
+## 📐 Skema Database
+
+Lihat dokumentasi lengkap di **`docs/DATABASE_SCHEMA.md`** untuk:
+- ERD (Entity Relationship Diagram)
+- Daftar tabel dan field
+- Index untuk performa
+- Contoh query analitik
+
+### Tabel Utama
+
+| Tabel | Keterangan |
+|-------|------------|
+| `users` | Master user dengan role |
+| `categories` | Kategori kuis |
+| `quizzes` | Master kuis |
+| `questions` | Soal per kuis |
+| `options` | Pilihan jawaban |
+| `quiz_sessions` | Sesi pengerjaan |
+| `quiz_progress` | Progress realtime |
+| `answers` | Jawaban user |
+| `results` | Hasil akhir |
+| `quiz_leaderboards` | Cache leaderboard |
+| `activity_logs` | Log aktivitas |
+| `settings` | Pengaturan sistem |
+| `report_exports` | Riwayat ekspor |
+
+---
+
+## 🚀 Panduan Instalasi
 
 ### Prerequisites
-- PHP 8.1 atau lebih tinggi
+- PHP >= 8.2
 - Composer
+- Node.js & NPM
 - MySQL/MariaDB
-- Node.js & NPM (untuk asset compilation)
 
-### Langkah Instalasi
+### Langkah-langkah
 
-1. **Clone atau extract project**
+1. **Clone & Masuk ke Folder**
    ```bash
    cd coc-quiz-app
    ```
 
-2. **Install dependencies**
+2. **Install Dependencies**
    ```bash
    composer install
    npm install
    ```
 
-3. **Setup environment**
+3. **Environment Setup**
    ```bash
-   copy .env.example .env
+   cp .env.example .env
    php artisan key:generate
    ```
 
-4. **Konfigurasi database**
-   
-   Edit file `.env`:
+4. **Database Configuration**
+   Edit `.env`:
    ```env
    DB_CONNECTION=mysql
    DB_HOST=127.0.0.1
    DB_PORT=3306
-   DB_DATABASE=coc_quiz_db
+   DB_DATABASE=zalvlmax_quiz
    DB_USERNAME=root
    DB_PASSWORD=
    ```
 
-5. **Buat database**
-   ```sql
-   CREATE DATABASE coc_quiz_db;
-   ```
-
-6. **Jalankan migration dan seeder**
+5. **Run Migrations & Seeders**
    ```bash
    php artisan migrate --seed
    ```
 
-7. **Compile assets**
+6. **Compile Assets & Run**
    ```bash
-   npm run dev
-   ```
-
-8. **Jalankan aplikasi**
-   ```bash
+   npm run build
    php artisan serve
    ```
-
-9. **Akses aplikasi**
-   
-   Buka browser: `http://localhost:8000`
-
-## 👤 Default Users
-
-### Admin
-- Email: `admin@coc-quiz.com`
-- Password: `admin123`
-
-### User (Peserta)
-- Email: `john@example.com`
-- Password: `password`
-
-- Email: `jane@example.com`
-- Password: `password`
-
-- Email: `bob@example.com`
-- Password: `password`
-
-## 📁 Struktur Database
-
-### Tabel Users
-- id, name, email, password, role (admin/user), is_active
-
-### Tabel Quizzes
-- id, title, description, duration, start_time, end_time, status
-
-### Tabel Questions
-- id, quiz_id, question_text, type (multiple_choice/true_false/multiple_correct), score
-
-### Tabel Options
-- id, question_id, option_text, is_correct
-
-### Tabel Answers
-- id, user_id, question_id, option_id
-
-### Tabel Results
-- id, user_id, quiz_id, total_score, correct_answers, wrong_answers, completion_time
-
-## 🎯 Cara Penggunaan
-
-### Untuk Admin
-
-1. **Login** sebagai admin
-2. **Dashboard**: Lihat statistik keseluruhan
-3. **Kelola Kuis**: 
-   - Klik "Kelola Kuis" di sidebar
-   - Tambah kuis baru dengan tombol "Tambah Kuis"
-   - Atur judul, deskripsi, durasi, dan jadwal
-4. **Kelola Soal**:
-   - Dari halaman kuis, klik "Kelola Soal"
-   - Tambah soal dengan berbagai tipe
-   - Tambahkan opsi jawaban dan tandai yang benar
-5. **Lihat Hasil**:
-   - Klik "Hasil Evaluasi" di sidebar
-   - Filter berdasarkan kuis
-   - Export ke Excel atau PDF
-6. **Kelola User**:
-   - Aktifkan/nonaktifkan user
-   - Reset password user
-
-### Untuk User (Peserta)
-
-1. **Login** sebagai user
-2. **Dashboard**: Lihat statistik personal
-3. **Daftar Kuis**:
-   - Klik "Kuis" di menu
-   - Pilih kuis yang aktif
-4. **Mengerjakan Kuis**:
-   - Klik "Mulai Kuis"
-   - Jawab soal satu per satu
-   - Waktu akan berjalan otomatis
-5. **Lihat Hasil**:
-   - Setelah selesai, lihat nilai dan pembahasan
-   - Cek posisi di leaderboard
-6. **Riwayat**:
-   - Lihat semua kuis yang pernah dikerjakan
-
-## 🔒 Middleware & Authorization
-
-- **AdminMiddleware**: Memastikan hanya admin yang akses route admin
-- **UserMiddleware**: Memastikan hanya user biasa yang akses route user
-- **Auth Middleware**: Memastikan user sudah login
-
-## 📊 Export Fitur
-
-### Export Excel
-- Format tabel rapi dengan header
-- Berisi: Nama, Email, Kuis, Skor, Jawaban Benar/Salah, Waktu
-- Route: `/admin/results/export/excel`
-
-### Export PDF
-- Layout profesional
-- Informasi lengkap hasil evaluasi
-- Route: `/admin/results/export/pdf`
-
-## 🎨 Konten Soal CoC
-
-Aplikasi sudah dilengkapi dengan 10 soal sample tentang:
-- Prinsip Chain of Custody
-- Penandaan dan pemisahan kayu
-- Dokumentasi (LHP, SKSHHK, SPK, SPA, BKMK)
-- Alur pergerakan kayu
-- Tanggung jawab CoC
-- IFCC-PEFC dan Uncontrolled Wood
-
-## 🚀 Routes
-
-### Admin Routes (Prefix: /admin)
-- GET `/admin/dashboard` - Dashboard admin
-- Resource `/admin/quizzes` - CRUD Kuis
-- GET `/admin/quizzes/{quiz}/questions` - Daftar soal
-- POST `/admin/quizzes/{quiz}/questions` - Tambah soal
-- GET `/admin/results` - Hasil evaluasi
-- GET `/admin/results/export/excel` - Export Excel
-- GET `/admin/results/export/pdf` - Export PDF
-- GET `/admin/users` - Manajemen user
-
-### User Routes (Prefix: /user)
-- GET `/user/dashboard` - Dashboard user
-- GET `/user/quizzes` - Daftar kuis
-- POST `/user/quizzes/{quiz}/start` - Mulai kuis
-- POST `/user/quizzes/{quiz}/question/{question}/submit` - Submit jawaban
-- GET `/user/results` - Riwayat hasil
-- GET `/user/leaderboard/{quiz?}` - Leaderboard
-
-## 🔧 Service Classes
-
-### QuizService
-- `calculateResult()` - Hitung hasil quiz
-- `getLeaderboard()` - Ambil leaderboard per quiz
-- `getGlobalLeaderboard()` - Leaderboard global
-- `hasUserTakenQuiz()` - Cek apakah user sudah mengerjakan
-- `getUserProgress()` - Progress pengerjaan user
-- `resetQuizAttempt()` - Reset attempt untuk retake
-
-## 📝 Models & Relationships
-
-- **User**: hasMany(Answer, Result)
-- **Quiz**: hasMany(Question, Result)
-- **Question**: belongsTo(Quiz), hasMany(Option, Answer)
-- **Option**: belongsTo(Question), hasMany(Answer)
-- **Answer**: belongsTo(User, Question, Option)
-- **Result**: belongsTo(User, Quiz)
-
-## ⚡ Performance Optimization
-
-- Eager loading untuk menghindari N+1 query
-- Pagination pada semua listing
-- Index pada foreign keys
-- Caching untuk leaderboard (optional)
-
-## 🐛 Troubleshooting
-
-### Error: Class not found
-```bash
-composer dump-autoload
-```
-
-### Error: Migration failed
-```bash
-php artisan migrate:fresh --seed
-```
-
-### Error: Permission denied
-```bash
-chmod -R 775 storage bootstrap/cache
-```
-
-## 📄 License
-
-This project is open-sourced software licensed under the MIT license.
-
-## 👨‍💻 Developer
-
-Developed with ❤️ for Chain of Custody Learning
+   Akses di: `http://localhost:8000`
 
 ---
 
-**Note**: Aplikasi ini production-ready dengan clean code, scalable architecture, dan mengikuti best practices Laravel.
+## 📦 Library yang Direkomendasikan
+
+### Untuk Excel Export
+```bash
+composer require maatwebsite/excel
+```
+
+### Untuk PDF Export
+```bash
+composer require barryvdh/laravel-dompdf
+```
+
+### Untuk Realtime (Pilih salah satu)
+
+**Laravel Reverb (Built-in):**
+```bash
+php artisan install:broadcasting
+```
+
+**Pusher:**
+```bash
+composer require pusher/pusher-php-server
+npm install --save laravel-echo pusher-js
+```
+
+### Untuk Role & Permission
+```bash
+composer require spatie/laravel-permission
+```
+
+### Untuk Activity Log
+```bash
+composer require spatie/laravel-activitylog
+```
+
+---
+
+## ☁️ Deployment ke Railway
+
+1. Hubungkan repo GitHub ke Railway
+2. Tambahkan variabel lingkungan:
+   - `APP_KEY`: Hasil dari `php artisan key:generate --show`
+   - `APP_ENV`: `production`
+   - `APP_URL`: `https://your-app.up.railway.app`
+   - `DB_CONNECTION`: `mysql`
+   - Kredensial DB dari Railway
+3. Jalankan migrasi: `php artisan migrate --force --seed`
+
+---
+
+## 👤 Akun Default
+
+| Role | Email | Password |
+|------|-------|----------|
+| **Super Admin** | `superadmin@zalvlmax.com` | `superadmin123` |
+| **Admin** | `admin@zalvlmax.com` | `admin123` |
+| **User** | `john@example.com` | `password` |
+
+---
+
+## 📚 Alur Sistem Super Admin
+
+```
+Login → Dashboard → Statistik & Monitoring
+                  → Manajemen User (CRUD + Role Assignment)
+                  → Manajemen Kuis (via Admin)
+                  → Monitoring Realtime
+                  → Analitik & Peringkat
+                  → Laporan (Filter + Export)
+                  → Pengaturan Sistem
+                  → Logout
+```
+
+Lihat alur lengkap di **`docs/DATABASE_SCHEMA.md`**
+
+---
+
+## 📄 Lisensi
+
+Proyek ini dilisensikan di bawah lisensi MIT.
+
+Created with ❤️ by **ZalvlmaX Team**
+

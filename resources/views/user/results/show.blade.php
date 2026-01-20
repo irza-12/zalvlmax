@@ -9,20 +9,21 @@
             <div class="card mb-4 text-center">
                 <div class="card-body py-5">
                     <div class="mb-4">
-                        @if($result->total_score >= 80)
-                            <i class="bi bi-trophy-fill text-warning" style="font-size: 5rem;"></i>
-                            <h3 class="mt-3 text-success">Luar Biasa!</h3>
-                        @elseif($result->total_score >= 60)
-                            <i class="bi bi-star-fill text-primary" style="font-size: 5rem;"></i>
-                            <h3 class="mt-3 text-primary">Bagus!</h3>
+                        @if($result->is_passed)
+                            <i class="bi bi-patch-check-fill text-success" style="font-size: 5rem;"></i>
+                            <h3 class="mt-3 text-success">Lulus Evaluasi!</h3>
+                            <p class="text-muted">Selamat! Anda telah berhasil mencapai nilai di atas ambang batas
+                                ({{ number_format($result->quiz->passing_score, 0) }}%).</p>
                         @else
-                            <i class="bi bi-emoji-smile text-warning" style="font-size: 5rem;"></i>
-                            <h3 class="mt-3 text-warning">Tetap Semangat!</h3>
+                            <i class="bi bi-exclamation-circle-fill text-danger" style="font-size: 5rem;"></i>
+                            <h3 class="mt-3 text-danger">Tidak Lulus Evaluasi</h3>
+                            <p class="text-muted">Jangan berkecil hati. Nilai Anda belum mencapai ambang batas kelulusan
+                                ({{ number_format($result->quiz->passing_score, 0) }}%).</p>
                         @endif
                     </div>
 
-                    <h2 class="display-4 fw-bold mb-2">{{ number_format($result->total_score, 0) }}</h2>
-                    <p class="text-muted mb-4">Total Skor Anda</p>
+                    <h2 class="display-4 fw-bold mb-2">{{ number_format((float) $result->percentage, 1) }}%</h2>
+                    <p class="text-muted mb-4">Skor Persentase Akhir</p>
 
                     <div class="row text-center">
                         <div class="col-4">
@@ -80,8 +81,12 @@
                         <a href="{{ route('user.quizzes.index') }}" class="btn btn-outline-primary">
                             <i class="bi bi-journal-text me-2"></i>Kuis Lainnya
                         </a>
-                        <a href="{{ route('user.leaderboard', $result->quiz) }}" class="btn btn-primary">
+                        <a href="{{ route('user.leaderboard', ['quiz_id' => $result->quiz_id]) }}"
+                            class="btn btn-outline-primary">
                             <i class="bi bi-trophy me-2"></i>Lihat Leaderboard
+                        </a>
+                        <a href="{{ route('user.results.export-pdf', $result) }}" class="btn btn-danger">
+                            <i class="bi bi-printer-fill me-2"></i>Cetak Hasil (PDF)
                         </a>
                     </div>
                 </div>

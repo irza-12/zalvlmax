@@ -1,0 +1,9 @@
+.git
+/node_modules
+/vendor
+/storage/*.key
+.env
+phpunit.xml
+.editorconfig
+.gitignore
+tests/

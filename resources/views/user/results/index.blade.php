@@ -17,10 +17,10 @@
                 <div class="card h-100">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-3">
-                            <span
-                                class="badge bg-{{ $result->total_score >= 80 ? 'success' : ($result->total_score >= 60 ? 'warning' : 'danger') }}">
-                                Skor: {{ floatval($result->total_score) }}
+                            <span class="badge bg-{{ $result->is_passed ? 'success' : 'danger' }}">
+                                {{ $result->is_passed ? 'Lulus' : 'Tidak Lulus' }}
                             </span>
+                            <span class="ms-2 font-bold">{{ number_format((float) $result->percentage, 0) }}%</span>
                             <small class="text-muted">{{ $result->created_at->format('d M Y, H:i') }}</small>
                         </div>
 
@@ -51,6 +51,10 @@
                     <div class="card-footer bg-white border-0 d-flex justify-content-between">
                         <a href="{{ route('user.results.show', $result) }}" class="btn btn-primary btn-sm flex-fill me-2">
                             <i class="bi bi-eye me-1"></i>Detail
+                        </a>
+                        <a href="{{ route('user.results.export-pdf', $result) }}"
+                            class="btn btn-outline-danger btn-sm flex-fill">
+                            <i class="bi bi-printer me-1"></i>Cetak
                         </a>
                     </div>
                 </div>

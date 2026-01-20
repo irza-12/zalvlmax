@@ -3,186 +3,317 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laporan Komparasi Jawaban - {{ $quiz->title }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Laporan Komparasi Jawaban</title>
     <style>
-        @media print {
-            .no-print {
-                display: none;
-            }
-
-            body {
-                padding: 0;
-                margin: 0;
-            }
-
-            .card {
-                border: none !important;
-                box-shadow: none !important;
-            }
-
-            .table-bordered th,
-            .table-bordered td {
-                border: 1px solid #dee2e6 !important;
-            }
+        @page {
+            margin: 1cm;
+            size: A4 landscape;
         }
 
         body {
-            background: #f8f9fa;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Helvetica', 'Arial', sans-serif;
+            font-size: 10px;
+            color: #333;
+            line-height: 1.3;
         }
 
-        .report-header {
-            border-bottom: 2px solid #333;
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+
+            body {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        .header {
+            text-align: center;
             margin-bottom: 20px;
+            border-bottom: 2px solid #4f46e5;
             padding-bottom: 10px;
         }
 
-        .table-compare th {
-            background-color: #f1f3f5;
+        .header h1 {
+            margin: 0;
+            color: #1e1b4b;
+            text-transform: uppercase;
+            font-size: 16px;
         }
 
-        .correct-bg {
-            background-color: #d4edda !important;
+        .header h2 {
+            margin: 5px 0 0;
+            font-size: 12px;
+            color: #4b5563;
+            font-weight: normal;
         }
 
-        .wrong-bg {
-            background-color: #f8d7da !important;
+        .meta-info {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
         }
 
-        .missing-bg {
-            background-color: #e9ecef !important;
+        .meta-info td {
+            padding: 4px;
+            vertical-align: top;
+        }
+
+        .label {
+            font-weight: bold;
+            width: 120px;
+            color: #555;
+        }
+
+        .summary-box {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+
+        .summary-box th {
+            background: #f3f4f6;
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #e5e7eb;
+            font-size: 10px;
+        }
+
+        .summary-box td {
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+            width:
+                {{ 60 / count($results) }}
+                %;
+        }
+
+        .score-large {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .score-pass {
+            color: #059669;
+        }
+
+        .score-fail {
+            color: #dc2626;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .data-table th {
+            background-color: #4f46e5;
+            color: white;
+            padding: 8px;
+            border: 1px solid #312e81;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .data-table td {
+            border: 1px solid #d1d5db;
+            padding: 6px;
+            vertical-align: top;
+        }
+
+        .question-col {
+            width: 30%;
+            text-align: left;
+            background: #f9fafb;
+        }
+
+        .answer-col {
+            text-align: center;
+        }
+
+        .correct {
+            background-color: #d1fae5;
+            color: #065f46;
+            font-weight: bold;
+            border-color: #a7f3d0;
+        }
+
+        .wrong {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #fecaca;
+        }
+
+        .empty {
+            background-color: #f3f4f6;
+            color: #6b7280;
+            font-style: italic;
+        }
+
+        .key-badge {
+            margin-top: 5px;
+            font-size: 9px;
+            color: #047857;
+            background: #ecfdf5;
+            padding: 2px 5px;
+            border: 1px solid #6ee7b7;
+            border-radius: 3px;
+            display: inline-block;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: #333;
+            border: 1px solid #ccc;
+            margin-left: 10px;
+        }
+
+        .toolbar {
+            padding: 15px;
+            background: #f3f4f6;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
     </style>
 </head>
 
-<body class="p-4">
-    <div class="container-fluid">
-        <div class="no-print mb-4 d-flex justify-content-between align-items-center bg-white p-3 rounded shadow-sm">
-            <div>
-                <h4 class="mb-0">Pratinjau Cetak PDF</h4>
-                <p class="text-muted mb-0 small">Gunakan fitur cetak browser (Ctrl+P) untuk menyimpan sebagai PDF</p>
-            </div>
-            <div>
-                <button onclick="window.print()" class="btn btn-primary">
-                    <i class="bi bi-printer"></i> Cetak Sekarang
-                </button>
-                <button onclick="window.close()" class="btn btn-secondary">Tutup</button>
-            </div>
+<body>
+
+    <div class="no-print toolbar" style="display: flex; justify-content: space-between;">
+        <div>
+            <strong style="font-size: 14px;">Pratinjau Cetak PDF</strong><br>
+            <span style="color: #666;">Gunakan Ctrl+P (Windows) atau Cmd+P (Mac) untuk menyimpan.</span>
         </div>
-
-        <div class="card shadow-sm border-0">
-            <div class="card-body p-5">
-                <div class="report-header d-flex justify-content-between align-items-end">
-                    <div>
-                        <h2 class="fw-bold mb-1">LAPORAN KOMPARASI JAWABAN</h2>
-                        <h4 class="text-primary mb-0">{{ $quiz->title }}</h4>
-                    </div>
-                    <div class="text-end">
-                        <p class="mb-0">Tanggal Cetak: <strong>{{ now()->format('d F Y, H:i') }}</strong></p>
-                        <p class="mb-0 text-muted small">Aplikasi {{ config('app.name') }}</p>
-                    </div>
-                </div>
-
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <table class="table table-sm table-bordered">
-                            <tr class="table-light">
-                                <th colspan="2">Statistik Grup</th>
-                            </tr>
-                            <tr>
-                                <td>Jumlah Peserta</td>
-                                <td><strong>{{ $results->count() }}</strong></td>
-                            </tr>
-                            <tr>
-                                <td>Rata-rata Skor</td>
-                                <td><strong>{{ number_format($results->avg('total_score'), 2) }}</strong></td>
-                            </tr>
-                            <tr>
-                                <td>Skor Tertinggi</td>
-                                <td class="text-success"><strong>{{ floatval($results->max('total_score')) }}</strong>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Skor Terendah</td>
-                                <td class="text-danger"><strong>{{ floatval($results->min('total_score')) }}</strong>
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="row mb-4 g-3">
-                    @foreach($results as $result)
-                        <div class="col">
-                            <div class="p-3 border rounded bg-light">
-                                <h6 class="fw-bold mb-1 text-truncate">{{ $result->user->name }}</h6>
-                                <div class="small">
-                                    Skor: <strong>{{ floatval($result->total_score) }}</strong><br>
-                                    Benar: {{ $result->correct_answers }} | Salah: {{ $result->wrong_answers }}
-                                </div>
-                            </div>
-                        </div>
-                    @endforeach
-                </div>
-
-                <table class="table table-bordered table-compare align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th style="width: 40%">Pertanyaan & Kunci Jawaban</th>
-                            @foreach($results as $result)
-                                <th class="text-center">{{ $result->user->name }}</th>
-                            @endforeach
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($quiz->questions as $index => $question)
-                            <tr>
-                                <td>
-                                    <div class="fw-bold mb-1">No. {{ $index + 1 }}</div>
-                                    <p class="mb-2 small">{{ $question->question_text }}</p>
-                                    <div class="p-1 px-2 border rounded bg-white small text-success fst-italic">
-                                        Kunci:
-                                        @foreach($question->options as $option)
-                                            @if($option->is_correct) {{ $option->option_text }} @endif
-                                        @endforeach
-                                    </div>
-                                </td>
-                                @foreach($results as $result)
-                                    @php
-                                        $answer = $result->user->answers->where('question_id', $question->id)->first();
-                                        $selectedOption = $answer ? $question->options->where('id', $answer->option_id)->first() : null;
-                                        $isCorrect = $answer ? $answer->isCorrect() : false;
-                                        $cellClass = $isCorrect ? 'correct-bg' : ($answer ? 'wrong-bg' : 'missing-bg');
-                                    @endphp
-                                    <td class="{{ $cellClass }} text-center small">
-                                        @if($selectedOption)
-                                            <div class="fw-bold {{ $isCorrect ? 'text-success' : 'text-danger' }}">
-                                                {{ $selectedOption->option_text }}
-                                            </div>
-                                            <div class="mt-1 small opacity-75">
-                                                ({{ $isCorrect ? 'BENAR' : 'SALAH' }})
-                                            </div>
-                                        @else
-                                            <span class="text-muted">Tidak dijawab</span>
-                                        @endif
-                                    </td>
-                                @endforeach
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-
-                <div class="mt-5 pt-4 border-top text-center text-muted small">
-                    <p>Laporan ini dihasilkan secara otomatis oleh Sistem Evaluasi {{ config('app.name') }}.</p>
-                </div>
-            </div>
+        <div>
+            <button onclick="window.print()" class="btn btn-primary">Cetak / Simpan PDF</button>
+            <button onclick="window.close()" class="btn btn-secondary">Tutup</button>
         </div>
     </div>
 
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <div class="header">
+        <h1>Laporan Komparasi Jawaban</h1>
+        <h2>{{ $quiz->title }}</h2>
+        <div style="margin-top: 5px; font-size: 9px; color: #888;">
+            Dicetak pada: {{ now()->format('d F Y, H:i') }} &bull; Oleh: {{ Auth::user()->name }}
+        </div>
+    </div>
+
+    <!-- Ringkasan Peserta -->
+    <table class="summary-box">
+        <thead>
+            <tr>
+                <th style="width: 30%;">Peserta</th>
+                @foreach($results as $result)
+                    <th style="text-align: center;">{{ $result->user->name }}</th>
+                @endforeach
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td style="text-align: left; font-weight: bold;">Skor Akhir</td>
+                @foreach($results as $result)
+                    <td>
+                        <div class="score-large {{ $result->is_passed ? 'score-pass' : 'score-fail' }}">
+                            {{ floatval($result->total_score) }}
+                        </div>
+                    </td>
+                @endforeach
+            </tr>
+            <tr>
+                <td style="text-align: left;">Durasi & Status</td>
+                @foreach($results as $result)
+                    <td>
+                        {{ $result->formatted_completion_time }}<br>
+                        <span
+                            style="font-weight: bold; font-size: 9px; text-transform: uppercase; color: {{ $result->is_passed ? '#059669' : '#dc2626' }}">
+                            {{ $result->is_passed ? 'Lulus' : 'Tidak Lulus' }}
+                        </span>
+                    </td>
+                @endforeach
+            </tr>
+            <tr>
+                <td style="text-align: left;">Detail Jawaban</td>
+                @foreach($results as $result)
+                    <td>
+                        <span style="color: green;">{{ $result->correct_answers }} Benar</span> &bull;
+                        <span style="color: red;">{{ $result->wrong_answers }} Salah</span>
+                    </td>
+                @endforeach
+            </tr>
+        </tbody>
+    </table>
+
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width: 30%; text-align: left;">Pertanyaan</th>
+                @foreach($results as $result)
+                    <th>{{ $result->user->name }}</th>
+                @endforeach
+            </tr>
+        </thead>
+        <tbody>
+            @foreach($quiz->questions as $index => $question)
+                <tr>
+                    <td class="question-col">
+                        <div style="margin-bottom: 4px;"><strong>No. {{ $index + 1 }}</strong></div>
+                        {{ $question->question_text }}
+                        <div class="key-badge">
+                            Kunci:
+                            @foreach($question->options as $option)
+                                @if($option->is_correct) {{ $option->option_text }} @endif
+                            @endforeach
+                        </div>
+                    </td>
+                    @foreach($results as $result)
+                        @php
+                            $answer = $result->user->answers->where('question_id', $question->id)->first();
+                            $selectedOption = $answer ? $question->options->where('id', $answer->option_id)->first() : null;
+                            $isCorrect = $answer ? $answer->isCorrect() : false;
+                            $cellClass = $isCorrect ? 'correct' : ($answer ? 'wrong' : 'empty');
+                        @endphp
+                        <td class="answer-col {{ $cellClass }}">
+                            @if($selectedOption)
+                                <strong>{{ $selectedOption->option_text }}</strong>
+                                @if(!$isCorrect)
+                                    <div style="font-size: 8px; margin-top: 2px; text-transform: uppercase;">Salah</div>
+                                @endif
+                            @else
+                                -
+                            @endif
+                        </td>
+                    @endforeach
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <div
+        style="margin-top: 30px; text-align: center; font-size: 9px; color: #9ca3af; border-top: 1px solid #e5e7eb; padding-top: 10px;">
+        {{ config('app.name') }} &bull; Laporan Resmi
+    </div>
+
 </body>
 
 </html>

@@ -15,7 +15,12 @@ return new class extends Migration {
             $table->foreignId('question_id')->constrained()->onDelete('cascade');
             $table->text('option_text');
             $table->boolean('is_correct')->default(false);
+            $table->integer('order')->default(0);
+            $table->string('image')->nullable();
             $table->timestamps();
+
+            $table->index('question_id');
+            $table->index('is_correct');
         });
     }
 
@@ -27,3 +32,4 @@ return new class extends Migration {
         Schema::dropIfExists('options');
     }
 };
+

@@ -7,6 +7,7 @@ use App\Models\Result;
 use App\Models\Quiz;
 use App\Services\QuizService;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ResultController extends Controller
 {
@@ -59,5 +60,20 @@ class ResultController extends Controller
         $quizzes = Quiz::where('status', 'active')->get();
 
         return view('user.results.leaderboard', compact('leaderboard', 'title', 'quiz', 'quizzes'));
+    }
+
+    public function exportPdf(Result $result)
+    {
+        // Security: only allow users to download their own results
+        if ($result->user_id !== auth()->id()) {
+            abort(403);
+        }
+
+        $result->load(['user', 'quiz.questions.options']);
+
+        $pdf = Pdf::loadView('admin.results.individual_pdf', compact('result'));
+        $pdf->setPaper('a4', 'portrait');
+
+        return $pdf->download('Sertifikat_Hasil_' . \Illuminate\Support\Str::slug($result->quiz->title) . '.pdf');
     }
 }

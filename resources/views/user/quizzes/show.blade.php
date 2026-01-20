@@ -113,12 +113,9 @@
                     <h3 class="mb-3">Siap Memulai?</h3>
                     <p class="mb-4">Pastikan Anda sudah membaca semua instruksi di atas</p>
 
-                    <form action="{{ route('user.quizzes.start', $quiz) }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-light btn-lg px-5">
-                            <i class="bi bi-play-circle-fill me-2"></i>Mulai Kuis Sekarang
-                        </button>
-                    </form>
+                    <a href="{{ route('user.quizzes.start', $quiz) }}" class="btn btn-light btn-lg px-5">
+                        <i class="bi bi-play-circle-fill me-2"></i>Mulai Kuis Sekarang
+                    </a>
 
                     <div class="mt-3">
                         <a href="{{ route('user.quizzes.index') }}" class="text-white text-decoration-none">
