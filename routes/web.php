@@ -14,6 +14,11 @@ use App\Http\Controllers\SuperAdmin\QuestionController as SuperAdminQuestionCont
 use App\Http\Controllers\SuperAdmin\ReportController as SuperAdminReportController;
 use Illuminate\Support\Facades\Route;
 
+// Health Check Route for Railway
+Route::get('/health', function () {
+    return response()->json(['status' => 'ok'], 200);
+});
+
 // Guest Routes
 Route::get('/', [\App\Http\Controllers\GuestQuizController::class, 'index'])->name('guest.join');
 Route::post('/check-code', [\App\Http\Controllers\GuestQuizController::class, 'checkCode'])->name('guest.check-code');
