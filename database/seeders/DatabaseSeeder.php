@@ -37,9 +37,9 @@ class DatabaseSeeder extends Seeder
 
         // Create Sample Users
         User::updateOrCreate(
-            ['email' => 'julikontol@example.com'],
+            ['email' => 'johndoe@example.com'],
             [
-                'name' => 'Juli Kontol',
+                'name' => 'John Doe',
                 'password' => Hash::make('password'),
                 'role' => 'user',
                 'is_active' => true,
