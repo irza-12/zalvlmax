@@ -100,7 +100,7 @@
                             </td>
                             @foreach($results as $result)
                                 @php
-                                    $answer = $result->user->answers->where('question_id', $question->id)->first();
+                                    $answer = $result->session ? $result->session->answers->where('question_id', $question->id)->first() : null;
                                     $selectedOption = $answer ? $question->options->where('id', $answer->option_id)->first() : null;
                                     $isCorrect = $answer ? $answer->isCorrect() : false;
                                     $bgClass = $isCorrect ? 'bg-green-50/50' : ($answer ? 'bg-red-50/50' : 'bg-gray-50/50');

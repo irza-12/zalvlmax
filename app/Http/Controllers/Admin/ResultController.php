@@ -360,13 +360,7 @@ class ResultController extends Controller
         $quiz = $results->first()->quiz;
 
         foreach ($results as $result) {
-            $result->load([
-                'user.answers' => function ($query) use ($quizId) {
-                    $query->whereHas('question', function ($q) use ($quizId) {
-                        $q->where('quiz_id', $quizId);
-                    });
-                }
-            ]);
+            $result->load(['session.answers']);
         }
 
         return compact('results', 'quiz');
