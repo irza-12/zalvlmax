@@ -540,6 +540,8 @@ class QuizService
         if (!$seconds)
             return '0 detik';
 
+        $seconds = abs($seconds);
+
         $minutes = floor($seconds / 60);
         $remainingSeconds = $seconds % 60;
 
