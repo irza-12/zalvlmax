@@ -262,7 +262,7 @@ class ResultController extends Controller
                 }
 
                 $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.results.individual_pdf', compact('result'));
-                $pdf->setPaper('a4', 'portrait');
+                $pdf->setPaper('a4', 'landscape');
                 return $pdf->stream('Evaluasi_' . \Illuminate\Support\Str::slug($session->user->name) . '.pdf');
             }
         }
@@ -293,7 +293,7 @@ class ResultController extends Controller
         if ($request->has('result_id') && $results->count() === 1) {
             $result = $results->first();
             $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('admin.results.individual_pdf', compact('result'));
-            $pdf->setPaper('a4', 'portrait');
+            $pdf->setPaper('a4', 'landscape');
             return $pdf->stream('Sertifikat_' . \Illuminate\Support\Str::slug($result->user->name) . '.pdf');
         }
 

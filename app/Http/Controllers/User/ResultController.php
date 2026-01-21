@@ -72,7 +72,7 @@ class ResultController extends Controller
         $result->load(['user', 'quiz.questions.options']);
 
         $pdf = Pdf::loadView('admin.results.individual_pdf', compact('result'));
-        $pdf->setPaper('a4', 'portrait');
+        $pdf->setPaper('a4', 'landscape');
 
         return $pdf->download('Sertifikat_Hasil_' . \Illuminate\Support\Str::slug($result->quiz->title) . '.pdf');
     }
