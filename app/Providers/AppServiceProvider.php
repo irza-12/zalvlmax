@@ -22,7 +22,11 @@ class AppServiceProvider extends ServiceProvider
     {
         // Default pagination is Tailwind
 
-        if (config('app.env') === 'production') {
+        // Force HTTPS in production or when behind a proxy that indicates HTTPS
+        if (
+            config('app.env') === 'production' ||
+            (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https')
+        ) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
     }
