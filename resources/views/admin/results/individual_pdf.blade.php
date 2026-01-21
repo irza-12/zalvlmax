@@ -3,7 +3,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>E-Certificate - {{ $result->user->name }}</title>
+    <title>Sertifikat Hasil - {{ $result->user->name }}</title>
     <style>
         @page {
             margin: 0;
@@ -18,13 +18,13 @@
             background-color: #ffffff;
         }
 
-        /* --- DEKORASI BACKGROUND --- */
+        /* --- DEKORASI --- */
         .accent-sidebar {
             position: fixed;
             top: 0;
             bottom: 0;
             left: 0;
-            width: 60px;
+            width: 50px;
             background-color: #1e3a8a;
             /* Biru Navy */
             z-index: -10;
@@ -32,30 +32,16 @@
 
         .accent-strip {
             position: fixed;
-            top: 40px;
-            bottom: 40px;
-            left: 60px;
-            width: 8px;
+            top: 0;
+            bottom: 0;
+            left: 50px;
+            width: 10px;
             background-color: #f59e0b;
             /* Emas */
             z-index: -9;
         }
 
-        /* Dekorasi Segitiga Pojok Kanan Atas */
-        .top-decor {
-            position: fixed;
-            top: 0;
-            right: 0;
-            width: 200px;
-            height: 200px;
-            background-color: #f1f5f9;
-            transform: rotate(45deg) translate(100px, -100px);
-            /* Trik CSS kotak diputar */
-            z-index: -20;
-        }
-
-        /* --- CONTAINER UTAMA (TABEL) --- */
-        /* Menggunakan tabel 100% tinggi agar vertikal center mudah */
+        /* --- CONTAINER --- */
         .main-wrapper {
             width: 100%;
             height: 100%;
@@ -65,8 +51,7 @@
         .main-cell {
             vertical-align: middle;
             padding-left: 100px;
-            /* Memberi ruang untuk sidebar kiri */
-            padding-right: 50px;
+            padding-right: 60px;
             padding-top: 40px;
             padding-bottom: 40px;
         }
@@ -80,7 +65,7 @@
 
         .logo-text {
             color: #1e3a8a;
-            font-size: 28px;
+            font-size: 24px;
             font-weight: bold;
             text-transform: uppercase;
             letter-spacing: 2px;
@@ -88,53 +73,56 @@
 
         .sub-logo {
             color: #64748b;
-            font-size: 14px;
+            font-size: 12px;
             letter-spacing: 3px;
             text-transform: uppercase;
             margin-top: 5px;
         }
 
-        /* --- CONTENT BODY --- */
+        /* --- CONTENT --- */
         .cert-title {
-            font-size: 16px;
-            color: #94a3b8;
+            font-size: 14px;
+            color: #64748b;
             text-transform: uppercase;
             letter-spacing: 2px;
             margin-bottom: 10px;
         }
 
         .recipient {
-            font-size: 42px;
+            font-size: 38px;
             color: #0f172a;
             font-weight: bold;
             text-transform: uppercase;
-            margin-bottom: 25px;
-            line-height: 1.2;
+            margin-bottom: 15px;
+            border-bottom: 1px solid #cbd5e1;
+            display: inline-block;
+            padding-bottom: 10px;
+            min-width: 400px;
         }
 
         .description {
             font-size: 16px;
             color: #475569;
-            line-height: 1.6;
-            margin-bottom: 30px;
-            max-width: 800px;
+            margin-bottom: 20px;
         }
 
         .quiz-name {
             color: #1e3a8a;
             font-weight: bold;
-            font-size: 20px;
+            font-size: 22px;
+            margin-bottom: 20px;
+            display: block;
         }
 
-        /* --- STATS BOX --- */
+        /* --- STATS & STATUS --- */
         .stats-container {
             border: 1px solid #cbd5e1;
             border-radius: 8px;
-            padding: 15px;
             background-color: #f8fafc;
-            display: inline-block;
-            width: 90%;
-            margin-bottom: 30px;
+            width: 100%;
+            margin-bottom: 20px;
+            overflow: hidden;
+            /* Rounded corner fix */
         }
 
         .stats-table {
@@ -144,9 +132,9 @@
 
         .stats-table td {
             text-align: center;
-            padding: 10px;
-            border-right: 1px solid #cbd5e1;
-            width: 25%;
+            padding: 15px;
+            border-right: 1px solid #e2e8f0;
+            width: 33.33%;
         }
 
         .stats-table td:last-child {
@@ -166,57 +154,63 @@
             margin-top: 5px;
         }
 
-        .pass-badge {
-            color: #166534;
-            background: #dcfce7;
-            padding: 5px 10px;
-            border-radius: 4px;
+        /* STATUS BANNER BESAR */
+        .status-header {
             font-size: 12px;
-            font-weight: bold;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            margin-top: 10px;
         }
 
-        .fail-badge {
-            color: #991b1b;
-            background: #fee2e2;
-            padding: 5px 10px;
-            border-radius: 4px;
-            font-size: 12px;
+        .status-banner {
+            padding: 15px;
+            border-radius: 6px;
             font-weight: bold;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+            display: block;
+            /* Full width block */
+            border: 2px solid transparent;
+        }
+
+        .status-pass {
+            background-color: #dcfce7;
+            color: #166534;
+            border-color: #bbf7d0;
+        }
+
+        .status-fail {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border-color: #fecaca;
         }
 
         /* --- FOOTER --- */
         .footer-table {
             width: 100%;
-            margin-top: 20px;
+            margin-top: 30px;
         }
 
         .issue-date {
-            font-size: 13px;
+            font-size: 12px;
             color: #64748b;
-        }
-
-        .signature-area {
-            text-align: center;
-            width: 200px;
-            float: right;
         }
 
         .sign-line {
             border-bottom: 1px solid #1e293b;
             margin-bottom: 5px;
-            height: 40px;
-            /* Space Tanda Tangan */
+            height: 50px;
+            width: 220px;
         }
 
         .sign-name {
             font-weight: bold;
             font-size: 14px;
             color: #0f172a;
-        }
-
-        .sign-role {
-            font-size: 11px;
-            color: #64748b;
         }
 
         .id-code {
@@ -231,79 +225,72 @@
 </head>
 
 <body>
-    <!-- Dekorasi Fixed -->
     <div class="accent-sidebar"></div>
     <div class="accent-strip"></div>
-    <div class="top-decor"></div>
     <div class="id-code">
-        DOC: {{ $result->id }}-{{ strtoupper(substr(md5($result->created_at), 0, 6)) }} | GEN:
-        {{ now()->format('Y-m-d H:i') }}
+        DOC: {{ $result->id }}-{{ strtoupper(substr(md5($result->created_at), 0, 6)) }}
     </div>
 
-    <!-- Layout Utama Menggunakan Tabel Penuh -->
     <table class="main-wrapper">
         <tr>
             <td class="main-cell">
 
-                <!-- Header -->
+                <!-- 1. Header -->
                 <div class="header-box">
                     <div class="logo-text">{{ config('app.name', 'ZalvlmaX') }}</div>
-                    <div class="sub-logo">Official Competency Report</div>
+                    <div class="sub-logo">Laporan Hasil Evaluasi Resmi</div>
                 </div>
 
-                <!-- Konten -->
-                <div class="cert-title">This Certificate is Presented to</div>
+                <!-- 2. Penerima -->
+                <div class="cert-title">Diberikan Kepada:</div>
                 <div class="recipient">{{ $result->user->name }}</div>
 
                 <div class="description">
-                    For successfully participating in the assessment session:<br>
-                    <span class="quiz-name">{{ $result->quiz->title }}</span><br>
-                    Demonstrating commitment and professional competency in the evaluated subject.
+                    Telah menyelesaikan evaluasi pemahaman pada materi:
                 </div>
+                <div class="quiz-name">{{ $result->quiz->title }}</div>
 
-                <!-- Statistik Rapi -->
+                <!-- 3. Statistik (Nilai, Benar, Durasi) -->
                 <div class="stats-container">
                     <table class="stats-table">
                         <tr>
                             <td>
                                 <div class="s-val">{{ number_format((float) $result->percentage, 1) }}%</div>
-                                <div class="s-lbl">Final Score</div>
+                                <div class="s-lbl">Nilai Akhir</div>
                             </td>
                             <td>
                                 <div class="s-val">{{ $result->correct_answers }} / {{ $result->total_questions }}</div>
-                                <div class="s-lbl">Accuracy</div>
+                                <div class="s-lbl">Jawaban Benar</div>
                             </td>
                             <td>
                                 <div class="s-val">{{ $result->formatted_completion_time }}</div>
-                                <div class="s-lbl">Duration</div>
-                            </td>
-                            <td>
-                                @if($result->is_passed)
-                                    <span class="pass-badge">PASSED</span>
-                                @else
-                                    <span class="fail-badge">COMPLETED</span>
-                                @endif
-                                <div class="s-lbl" style="margin-top:8px;">Status</div>
+                                <div class="s-lbl">Durasi</div>
                             </td>
                         </tr>
                     </table>
                 </div>
 
-                <!-- Footer Tanda Tangan -->
+                <!-- 4. STATUS KELULUSAN (BESAR & JELAS) -->
+                <div class="status-header">Status Kelulusan:</div>
+                @if($result->is_passed)
+                    <div class="status-banner status-pass">LULUS (PASSED)</div>
+                @else
+                    <div class="status-banner status-fail">TIDAK LULUS (FAILED)</div>
+                @endif
+
+                <!-- 5. Footer -->
                 <table class="footer-table">
                     <tr>
                         <td valign="bottom" style="width: 60%;">
                             <div class="issue-date">
-                                <strong>Date of Issue:</strong><br>
-                                {{ $result->created_at->format('d F Y') }}
+                                Tanggal Terbit:<br>
+                                <strong>{{ $result->created_at->isoFormat('D MMMM YYYY') }}</strong>
                             </div>
                         </td>
                         <td valign="bottom" align="right">
-                            <div class="signature-area">
-                                <div class="sign-line"></div>
-                                <div class="sign-name">Admin Evaluasi</div>
-                                <div class="sign-role">Assessment Director</div>
-                            </div>
+                            <div class="sign-line"></div>
+                            <div class="sign-name">Admin Evaluasi</div>
+                            <div style="font-size: 11px; color: #64748b;">Penanggung Jawab</div>
                         </td>
                     </tr>
                 </table>
