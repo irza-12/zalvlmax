@@ -329,6 +329,7 @@ class QuizService
                     'score' => $result->total_score,
                     'completion_time' => $result->completion_time,
                     'formatted_time' => $this->formatTime($result->completion_time),
+                    'formatted_completion_time' => $this->formatTime($result->completion_time),
                     'session_id' => $result->session_id,
                 ];
             })->toArray();
@@ -357,6 +358,7 @@ class QuizService
                 'score' => $entry->total_score,
                 'completion_time' => $entry->completion_time,
                 'formatted_time' => $entry->formatted_time,
+                'formatted_completion_time' => $this->formatTime($entry->completion_time),
                 'session_id' => $sessionId,
             ];
         })->toArray();
@@ -542,7 +544,7 @@ class QuizService
         $remainingSeconds = $seconds % 60;
 
         if ($minutes > 0) {
-            return sprintf('%d:%02d', $minutes, $remainingSeconds);
+            return sprintf('%d menit %02d detik', $minutes, $remainingSeconds);
         }
 
         return sprintf('%d detik', $remainingSeconds);

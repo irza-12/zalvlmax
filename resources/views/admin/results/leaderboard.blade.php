@@ -50,7 +50,7 @@
                                 <th class="px-8 py-5 text-center">Rank</th>
                                 <th class="px-6 py-5">Peserta</th>
                                 <th class="px-6 py-5">Total Skor</th>
-                                <th class="px-6 py-5">Waktu Pengerjaan</th>
+                                <th class="px-6 py-5">Durasi</th>
                                 <th class="px-6 py-5">Tanggal</th>
                             </tr>
                         </thead>
