@@ -107,7 +107,7 @@
                                         Skor</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-left text-xs font-medium text-secondary-500 uppercase tracking-wider">
-                                        Waktu</th>
+                                        Durasi</th>
                                     <th scope="col"
                                         class="px-6 py-3 text-right text-xs font-medium text-secondary-500 uppercase tracking-wider">
                                         Cetak</th>
@@ -161,7 +161,7 @@
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap">
                                             <span
-                                                class="inline-flex items-center rounded-md bg-secondary-100 px-2 py-1 text-xs font-medium text-secondary-600">{{ gmdate('H:i:s', $item['completion_time']) }}</span>
+                                                class="inline-flex items-center rounded-md bg-secondary-100 px-2 py-1 text-xs font-medium text-secondary-600">{{ $item['formatted_completion_time'] }}</span>
                                         </td>
                                         <td class="px-6 py-4 whitespace-nowrap text-right">
                                             @php
