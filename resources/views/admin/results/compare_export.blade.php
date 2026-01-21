@@ -178,7 +178,9 @@
                     </td>
                     @foreach($results as $result)
                         @php
-                            $answer = $result->session ? $result->session->answers->where('question_id', $question->id)->first() : null;
+                            $answer = ($result->session && $result->session->answers->where('question_id', $question->id)->count() > 0)
+                                ? $result->session->answers->where('question_id', $question->id)->first()
+                                : $result->user->answers->where('question_id', $question->id)->first();
                             $selectedOption = $answer ? $question->options->where('id', $answer->option_id)->first() : null;
                             $isCorrect = $answer ? $answer->isCorrect() : false;
                             $cellClass = $isCorrect ? 'correct' : ($answer ? 'wrong' : 'empty');
