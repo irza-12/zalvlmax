@@ -317,12 +317,15 @@ class ResultController extends Controller
         try {
             $data = $this->getComparisonData($request->ids);
 
-            header("Content-Type: application/vnd.ms-excel");
-            header("Content-Disposition: attachment; filename=Komparasi_Jawaban_" . now()->format('Ymd_His') . ".xls");
-            header("Pragma: no-cache");
-            header("Expires: 0");
+            $viewContent = view('admin.results.compare_export', $data)->render();
+            // Add BOM for Excel UTF-8 compatibility
+            $content = "\xEF\xBB\xBF" . $viewContent;
 
-            return view('admin.results.compare_export', $data);
+            return response($content)
+                ->header('Content-Type', 'application/vnd.ms-excel')
+                ->header('Content-Disposition', 'attachment; filename="Komparasi_Jawaban_' . now()->format('Ymd_His') . '.xls"')
+                ->header('Pragma', 'no-cache')
+                ->header('Expires', '0');
         } catch (\Exception $e) {
             return redirect()->back()->with('error', $e->getMessage());
         }

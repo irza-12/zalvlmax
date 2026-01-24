@@ -178,9 +178,20 @@
                     </td>
                     @foreach($results as $result)
                         @php
-                            $answer = ($result->session && $result->session->answers->where('question_id', $question->id)->count() > 0)
-                                ? $result->session->answers->where('question_id', $question->id)->first()
-                                : $result->user->answers->where('question_id', $question->id)->first();
+                            // Optimization: Check and KeyBy answers once per user, not per question
+                            // Handle cases where session might be null (legacy data)
+                            $sessionAnswers = ($result->session && $result->session->answers)
+                                ? $result->session->answers->keyBy('question_id')
+                                : collect();
+
+                            // User answers are already loaded with quiz_id constraint in controller
+                            $userAnswers = ($result->user && $result->user->answers)
+                                ? $result->user->answers->keyBy('question_id')
+                                : collect();
+
+                            // Logic: Prioritize session answer, fallback to general user answer (if any)
+                            $answer = $sessionAnswers->get($question->id) ?? $userAnswers->get($question->id);
+
                             $selectedOption = $answer ? $question->options->where('id', $answer->option_id)->first() : null;
                             $isCorrect = $answer ? $answer->isCorrect() : false;
                             $cellClass = $isCorrect ? 'correct' : ($answer ? 'wrong' : 'empty');
