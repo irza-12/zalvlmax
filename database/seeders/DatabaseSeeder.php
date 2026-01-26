@@ -35,37 +35,6 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Create Sample Users
-        User::updateOrCreate(
-            ['email' => 'johndoe@example.com'],
-            [
-                'name' => 'John Doe',
-                'password' => Hash::make('password'),
-                'role' => 'user',
-                'is_active' => true,
-            ]
-        );
-
-        User::updateOrCreate(
-            ['email' => 'jane@example.com'],
-            [
-                'name' => 'Jane Smith',
-                'password' => Hash::make('password'),
-                'role' => 'user',
-                'is_active' => true,
-            ]
-        );
-
-        User::updateOrCreate(
-            ['email' => 'bob@example.com'],
-            [
-                'name' => 'Bob Wilson',
-                'password' => Hash::make('password'),
-                'role' => 'user',
-                'is_active' => true,
-            ]
-        );
-
         // Call other seeders
         $this->call([
             CategorySeeder::class,
@@ -74,4 +43,5 @@ class DatabaseSeeder extends Seeder
         ]);
     }
 }
+
 
