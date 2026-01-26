@@ -25,7 +25,7 @@ class QuizController extends Controller
     public function join(Request $request)
     {
         $request->validate([
-            'access_code' => 'required|string',
+            'access_code' => 'required|numeric',
         ]);
 
         $code = $request->access_code;

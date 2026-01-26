@@ -227,6 +227,13 @@
 <body>
     <div class="accent-sidebar"></div>
     <div class="accent-strip"></div>
+
+    <!-- Watermark -->
+    <div
+        style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-45deg); font-size: 100px; color: rgba(30, 58, 138, 0.03); z-index: -5; font-weight: bold; white-space: nowrap; pointer-events: none;">
+        OFFICIAL RESULT
+    </div>
+
     <div class="id-code">
         DOC: {{ $result->id }}-{{ strtoupper(substr(md5($result->created_at), 0, 6)) }}
     </div>
