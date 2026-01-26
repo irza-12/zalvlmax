@@ -48,7 +48,9 @@
                         <div class="col-md-3 col-6 mb-3">
                             <div class="p-3">
                                 <i class="bi bi-calendar-check text-success" style="font-size: 2rem;"></i>
-                                <h4 class="mt-2 mb-0">{{ $quiz->end_time->format('d M') }}</h4>
+                                <h4 class="mt-2 mb-0">
+                                    {{ $quiz->end_time ? $quiz->end_time->format('d M') : '∞' }}
+                                </h4>
                                 <small class="text-muted">Deadline</small>
                             </div>
                         </div>
