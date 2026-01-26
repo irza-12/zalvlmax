@@ -1,4 +1,13 @@
-<x-app-layout>
+<?php if (isset($component)) { $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54 = $attributes; } ?>
+<?php $component = App\View\Components\AppLayout::resolve([] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('app-layout'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\App\View\Components\AppLayout::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
     <!-- Keep Bootstrap Icons for Category Icons compatibility -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
@@ -46,14 +55,14 @@
 
         <!-- Grid Layout -->
         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                @forelse($categories as $category)
+                <?php $__empty_1 = true; $__currentLoopData = $categories; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $category): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); $__empty_1 = false; ?>
                     <div
                         class="relative flex flex-col overflow-hidden rounded-2xl bg-white shadow-card transition-all hover:shadow-lg border border-secondary-100">
                         <div class="p-6">
                             <div class="flex items-start justify-between">
                                 <div class="flex items-center justify-center w-12 h-12 rounded-xl"
-                                    style="background-color: {{ $category->color }}20; color: {{ $category->color }}">
-                                    <i class="bi bi-{{ $category->icon ?? 'folder' }} text-xl"></i>
+                                    style="background-color: <?php echo e($category->color); ?>20; color: <?php echo e($category->color); ?>">
+                                    <i class="bi bi-<?php echo e($category->icon ?? 'folder'); ?> text-xl"></i>
                                 </div>
 
                                 <!-- Dropdown -->
@@ -73,13 +82,13 @@
                                         x-transition:leave-start="transform opacity-100 scale-100"
                                         x-transition:leave-end="transform opacity-0 scale-95"
                                         class="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                        <button @click="open = false; openEdit({{ json_encode($category) }})"
+                                        <button @click="open = false; openEdit(<?php echo e(json_encode($category)); ?>)"
                                             class="flex w-full px-4 py-2 text-sm text-secondary-700 hover:bg-secondary-50">
                                             Edit
                                         </button>
-                                        <form action="{{ route('superadmin.categories.destroy', $category) }}" method="POST"
+                                        <form action="<?php echo e(route('superadmin.categories.destroy', $category)); ?>" method="POST"
                                             onsubmit="return confirm('Hapus kategori ini?')">
-                                            @csrf @method('DELETE')
+                                            <?php echo csrf_field(); ?> <?php echo method_field('DELETE'); ?>
                                             <button type="submit"
                                                 class="flex w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50">
                                                 Hapus
@@ -90,22 +99,24 @@
                             </div>
 
                             <div class="mt-4">
-                                <h3 class="text-lg font-semibold text-secondary-900">{{ $category->name }}</h3>
+                                <h3 class="text-lg font-semibold text-secondary-900"><?php echo e($category->name); ?></h3>
                                 <p class="mt-1 text-sm text-secondary-500 line-clamp-2 h-10">
-                                    {{ $category->description ?? 'Tidak ada deskripsi' }}
+                                    <?php echo e($category->description ?? 'Tidak ada deskripsi'); ?>
+
                                 </p>
                             </div>
 
                             <div class="mt-6 flex items-center justify-between border-t border-secondary-100 pt-4">
                                 <span
-                                    class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset {{ $category->is_active ? 'bg-green-50 text-green-700 ring-green-600/20' : 'bg-red-50 text-red-700 ring-red-600/10' }}">
-                                    {{ $category->is_active ? 'Aktif' : 'Nonaktif' }}
+                                    class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset <?php echo e($category->is_active ? 'bg-green-50 text-green-700 ring-green-600/20' : 'bg-red-50 text-red-700 ring-red-600/10'); ?>">
+                                    <?php echo e($category->is_active ? 'Aktif' : 'Nonaktif'); ?>
+
                                 </span>
-                                <span class="text-xs text-secondary-500">{{ $category->quizzes_count }} kuis</span>
+                                <span class="text-xs text-secondary-500"><?php echo e($category->quizzes_count); ?> kuis</span>
                             </div>
                         </div>
                     </div>
-                @empty
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); if ($__empty_1): ?>
                     <div
                         class="col-span-full py-12 text-center bg-white rounded-2xl border border-dashed border-secondary-300">
                         <svg class="mx-auto h-12 w-12 text-secondary-400" fill="none" viewBox="0 0 24 24"
@@ -127,11 +138,12 @@
                             </button>
                         </div>
                     </div>
-                @endforelse
+                <?php endif; ?>
             </div>
 
             <div class="mt-6">
-                {{ $categories->links() }}
+                <?php echo e($categories->links()); ?>
+
             </div>
 
             <!-- Add Modal -->
@@ -152,8 +164,8 @@
                             x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                             class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-secondary-100">
-                            <form action="{{ route('superadmin.categories.store') }}" method="POST">
-                                @csrf
+                            <form action="<?php echo e(route('superadmin.categories.store')); ?>" method="POST">
+                                <?php echo csrf_field(); ?>
                                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                                     <h3 class="text-lg font-semibold leading-6 text-secondary-900 mb-4"
                                         id="modal-title">
@@ -231,7 +243,7 @@
                             x-transition:leave-end="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                             class="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-secondary-100">
                             <form :action="editForm.action" method="POST">
-                                @csrf @method('PUT')
+                                <?php echo csrf_field(); ?> <?php echo method_field('PUT'); ?>
                                 <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                                     <h3 class="text-lg font-semibold leading-6 text-secondary-900 mb-4">Edit Kategori
                                     </h3>
@@ -292,4 +304,13 @@
             </div>
 
         </div>
-</x-app-layout>
+ <?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $attributes = $__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__attributesOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54)): ?>
+<?php $component = $__componentOriginal9ac128a9029c0e4701924bd2d73d7f54; ?>
+<?php unset($__componentOriginal9ac128a9029c0e4701924bd2d73d7f54); ?>
+<?php endif; ?><?php /**PATH C:\Users\Hype AMD\.gemini\antigravity\scratch\coc-quiz-app\resources\views/superadmin/categories/index.blade.php ENDPATH**/ ?>
