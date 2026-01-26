@@ -35,11 +35,9 @@ class DatabaseSeeder extends Seeder
             ]
         );
 
-        // Call other seeders
+        // Call other seeders (only settings, categories and quizzes added manually by admin)
         $this->call([
-            CategorySeeder::class,
             SettingSeeder::class,
-            QuizSeeder::class,
         ]);
     }
 }
