@@ -216,7 +216,7 @@ class QuizController extends Controller
             return redirect()->route('user.quizzes.question', [
                 'quiz' => $quiz,
                 'question' => $nextQuestion
-            ]);
+            ])->with('last_answer_status', $isCorrect ? 'correct' : 'incorrect');
         }
 
         // No more questions, finish quiz

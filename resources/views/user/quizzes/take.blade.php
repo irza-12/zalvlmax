@@ -180,8 +180,16 @@
                                 <span class="text-secondary small fw-bold">Progress Pengerjaan</span>
                                 <span class="badge bg-success-subtle text-success rounded-pill">{{ $progress['percentage'] }}%</span>
                             </div>
+                            @php
+                                $barColor = 'bg-primary'; // Default blue
+                                if (session('last_answer_status') === 'correct') {
+                                    $barColor = 'bg-success';
+                                } elseif (session('last_answer_status') === 'incorrect') {
+                                    $barColor = 'bg-danger';
+                                }
+                            @endphp
                             <div class="progress rounded-pill shadow-none" style="height: 12px; background-color: #f1f5f9;">
-                                <div class="progress-bar bg-success progress-bar-striped progress-bar-animated rounded-pill" 
+                                <div class="progress-bar {{ $barColor }} progress-bar-striped progress-bar-animated rounded-pill" 
                                      style="width: {{ $progress['percentage'] }}%"></div>
                             </div>
                             <div class="mt-2 text-center text-secondary small">
