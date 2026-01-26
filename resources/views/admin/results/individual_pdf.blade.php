@@ -200,12 +200,7 @@
             color: #64748b;
         }
 
-        .sign-line {
-            border-bottom: 1px solid #1e293b;
-            margin-bottom: 5px;
-            height: 50px;
-            width: 220px;
-        }
+
 
         .sign-name {
             font-weight: bold;
@@ -295,9 +290,13 @@
                             </div>
                         </td>
                         <td valign="bottom" align="right">
-                            <div class="sign-line"></div>
-                            <div class="sign-name">Admin Evaluasi</div>
-                            <div style="font-size: 11px; color: #64748b;">Penanggung Jawab</div>
+                            <div style="width: 200px; text-align: center; float: right;">
+                                <div
+                                    style="border-bottom: 1px solid #1e293b; margin-bottom: 8px; height: 50px; width: 100%;">
+                                </div>
+                                <div class="sign-name">Admin Evaluasi</div>
+                                <div style="font-size: 11px; color: #64748b;">Penanggung Jawab</div>
+                            </div>
                         </td>
                     </tr>
                 </table>
